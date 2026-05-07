@@ -1,10 +1,11 @@
-import { Resend } from "resend";
-
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null;
-
 const FROM = "Rajshahi Mangoes <orders@rajshahimangoes.com>";
+
+async function getResend() {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return null;
+  const { Resend } = await import("resend");
+  return new Resend(apiKey);
+}
 
 // Helper — only send if Resend is configured
 async function safeSend(payload: {
@@ -12,6 +13,7 @@ async function safeSend(payload: {
   subject: string;
   html: string;
 }) {
+  const resend = await getResend();
   if (!resend) {
     console.warn("[EMAIL] RESEND_API_KEY not set — skipping email");
     return;
