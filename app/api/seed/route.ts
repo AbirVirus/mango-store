@@ -23,8 +23,9 @@ export async function POST() {
     );
   } catch (error) {
     console.error("Seed error:", error);
+    const message = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
-      { error: "Failed to seed database" },
+      { error: "Failed to seed database", detail: message },
       { status: 500 }
     );
   }
